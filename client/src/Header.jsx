@@ -4,7 +4,7 @@ import {Button} from "./components/ui/button";
 
 const Header = () => {
   return (
-    <header className="bg-white text-black py-4 px-5 lg:px-30 flex justify-between items-center shadow-2xs">
+    <header className="bg-white text-black py-4 border-b px-5 lg:px-30 flex justify-between items-center shadow-2xs">
       <NavLink to="/" className="flex items-center gap-2">
         <span className="text-2xl font-extrabold  tracking-tight">
           impactList
