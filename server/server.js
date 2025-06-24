@@ -19,7 +19,7 @@ if (MODE === "dev") {
       origin: "http://localhost:5173",
     })
   );
-} else {
+} else if (MODE === "prod") {
   app.use(
     cors({
       origin: "https://impact-list.vercel.app",
