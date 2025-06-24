@@ -70,7 +70,7 @@ const ReviewCard = ({img, name, username, body}) => {
 
 export function MarqueeComponent() {
   return (
-    <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+    <div className="relative flex w-full flex-col items-center justify-center overflow-hidden lg:mb-10">
       <Marquee pauseOnHover className="[--duration:20s]">
         {firstRow.map((review) => (
           <ReviewCard key={review.username} {...review} />
