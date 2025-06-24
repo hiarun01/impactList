@@ -11,12 +11,21 @@ const app = express();
 
 // cors middleware
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-  })
-);
+let MODE = process.env.MODE;
+
+if (MODE === "dev") {
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+    })
+  );
+} else {
+  app.use(
+    cors({
+      origin: "https://impact-list.vercel.app",
+    })
+  );
+}
 
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
