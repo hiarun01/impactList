@@ -1,7 +1,7 @@
 import React from "react";
 import {createBrowserRouter} from "react-router-dom";
 import ApplAyout from "./AppLayout/ApplAyout";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard/Dashboard";
 import {RouterProvider} from "react-router";
 import Home from "./pages/Home";
 
