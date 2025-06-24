@@ -3,10 +3,20 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import {postRoutes} from "./routes/post.routes.js";
 import connectDB from "./utils/dbConnection.js";
+import cors from "cors";
 
 dotenv.config({});
 
 const app = express();
+
+// cors middleware
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  })
+);
 
 const PORT = process.env.PORT || 3000;
 app.use(express.json());

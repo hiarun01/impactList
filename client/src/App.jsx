@@ -4,6 +4,7 @@ import ApplAyout from "./AppLayout/ApplAyout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import {RouterProvider} from "react-router";
 import Home from "./pages/Home";
+import Post from "./pages/Post";
 
 const router = createBrowserRouter([
   {
@@ -15,8 +16,12 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "dashboard",
+        path: "/dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/contribute",
+        element: <Post />,
       },
     ],
   },
