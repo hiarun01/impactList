@@ -4,9 +4,9 @@ import {Button} from "./components/ui/button";
 
 const HeroSection = () => {
   return (
-    <section className="container mx-auto px-5 py-25 md:py-10 text-center bg-white from-white via-gray-50 to-gray-100 rounded-xl ">
+    <section className="container mx-auto px-5 py-10 md:py-10 text-center bg-white from-white via-gray-50 to-gray-100 rounded-xl ">
       {/* Main heading */}
-      <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-3xl mx-auto leading-tight">
+      <h1 className="md:text-6xl text-3xl font-extrabold tracking-tight mb-6 max-w-3xl mx-auto leading-tight">
         Discover Top Things That Changed People's Life
       </h1>
       {/* Subtext */}
@@ -16,7 +16,15 @@ const HeroSection = () => {
           the top things that changed their lives from books and habits to tools
           and podcasts.
         </p>
+        <span className="flex justify-center items-center gap-1 border-t mt-2">
+          <span className="w-2 h-2 bg-green-500 rounded-full " />
+          <span className="font-bold font-mono text-sm">
+            {" "}
+            No signup required{" "}
+          </span>
+        </span>
       </div>
+
       {/* CTA buttons */}
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
         <NavLink to="/dashboard">
