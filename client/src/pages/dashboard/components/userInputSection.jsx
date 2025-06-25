@@ -12,8 +12,8 @@ import {NavLink} from "react-router-dom";
 
 const userInputSection = () => {
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full">
-      <div className="mb-4 w-full max-w-3xl text-center py-12">
+    <div className="sticky top-0 z-10 bg-white flex flex-col items-center justify-center w-full h-full shadow">
+      <div className="mb-4 w-full max-w-3xl text-center py-5">
         <h1 className="text-3xl font-bold ">What changed your life?</h1>
         <p className="text-gray-600">Share your thoughts and experiences</p>
       </div>
