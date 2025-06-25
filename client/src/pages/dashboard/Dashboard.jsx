@@ -23,7 +23,7 @@ const Dashboard = () => {
       <UserInputSection />
       <div>
         <ul className="max-w-3xl flex justify-center flex-col mx-auto gap-5 p-5">
-          {postData.map((post) => {
+          {postData.map((post, index) => {
             const {
               title,
               description,
@@ -43,13 +43,13 @@ const Dashboard = () => {
                   </span>
                 </div> */}
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <span className="text-xs bg-black text-white px-3 py-2 rounded-full font-semibold">
-                    #1
+                  <span className="text-xs bg-black text-white px-2 py-2 rounded-full font-semibold">
+                    # {index + 1}
                   </span>{" "}
                   {title}
                 </h2>
                 <p className="text-gray-700">{description}</p>
-                <div className="flex items-center gap-2 mt-3">
+                <div className="flex items-center gap-2 ">
                   <span className="text-sm text-gray-500">
                     <span className="font-semibold">By :</span>{" "}
                     {xUsername && (
