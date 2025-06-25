@@ -6,7 +6,7 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    descrption: {
+    description: {
       type: String,
       required: true,
     },
@@ -16,7 +16,7 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
 
-    twitterUsername: {
+    xUsername: {
       type: String,
       required: true,
     },
