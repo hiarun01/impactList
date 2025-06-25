@@ -25,17 +25,16 @@ const Dashboard = () => {
         <ul className="max-w-3xl flex justify-center flex-col mx-auto gap-5 p-5">
           {postData.map((post) => {
             const {
-              id,
               title,
-              descrption,
+              description,
               username,
-              twitterUsername,
+              xUsername,
               resourceUrl,
               category,
             } = post;
             return (
               <li
-                key={id}
+                key={post.id}
                 className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 flex flex-col gap-2 hover:shadow-md transition-shadow"
               >
                 {/* <div className="flex items-center justify-between mb-2">
@@ -49,13 +48,13 @@ const Dashboard = () => {
                   </span>{" "}
                   {title}
                 </h2>
-                <p className="text-gray-700">{descrption}</p>
+                <p className="text-gray-700">{description}</p>
                 <div className="flex items-center gap-2 mt-3">
                   <span className="text-sm text-gray-500">
                     <span className="font-semibold">By :</span>{" "}
-                    {twitterUsername && (
+                    {xUsername && (
                       <a
-                        href={`https://twitter.com/${twitterUsername}`}
+                        href={`https://twitter.com/${xUsername}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-500 hover:underline"
