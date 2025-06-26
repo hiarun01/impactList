@@ -16,9 +16,9 @@ const Header = () => {
     if (isDashboard) {
       getPosts().then((res) => {
         const posts = res.data;
-        // Get unique usernames
-        const uniqueUsers = new Set(posts.map((post) => post.username));
-        setContributorCount(uniqueUsers.size);
+        // Get posts
+        const postsCount = new Set(posts.map((post) => post));
+        setContributorCount(postsCount.size);
       });
     }
   }, [isDashboard]);

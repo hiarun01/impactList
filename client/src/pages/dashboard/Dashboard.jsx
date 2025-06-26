@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import UserInputSection from "./components/userInputSection";
 import {getPosts} from "@/services/api";
-import {Heart} from "lucide-react";
 
 const Dashboard = () => {
   const [postData, setPostData] = useState([]);

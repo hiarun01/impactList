@@ -20,7 +20,7 @@ const HeroSection = () => {
           <span className="w-2 h-2 bg-green-500 rounded-full " />
           <span className="font-bold font-mono text-sm">
             {" "}
-            No signup required{" "}
+            No signup required
           </span>
         </span>
       </div>
