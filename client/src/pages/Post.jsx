@@ -51,7 +51,7 @@ const Post = () => {
     try {
       await addPost(form);
       navigate("/dashboard");
-      toast.success("Entry added successfully");
+      toast.success("Your contribution added successfully");
     } catch (error) {
       console.error("Error while adding entry", error);
       toast.error("Error while adding entry", error);
