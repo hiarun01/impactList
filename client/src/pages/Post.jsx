@@ -132,6 +132,7 @@ const Post = () => {
                   <SelectItem value="article">Article</SelectItem>
                   <SelectItem value="podcast">Podcast</SelectItem>
                   <SelectItem value="movies">Movies</SelectItem>
+                  <SelectItem value="movies">advice</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
