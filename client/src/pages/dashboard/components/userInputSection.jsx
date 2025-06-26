@@ -31,6 +31,7 @@ const userInputSection = () => {
                 <SelectItem value="blueberry">Article</SelectItem>
                 <SelectItem value="grapes">Podcast</SelectItem>
                 <SelectItem value="pineapple">Movies</SelectItem>
+                <SelectItem value="pineapple">Advice</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

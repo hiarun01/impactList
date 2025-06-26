@@ -1,4 +1,4 @@
-import {GET_POSTS_API, POST_API} from "@/constants/constants";
+import {GET_POSTS_API, POST_API, VOTE_API} from "@/constants/constants";
 import axios from "axios";
 
 export const api = axios.create({
@@ -19,4 +19,12 @@ export const addPost = async (form) => {
       "Content-Type": "application/json",
     },
   });
+};
+
+export const updateVote = async (id, vote) => {
+  return await api.post(
+    VOTE_API,
+    {id, vote},
+    {headers: {"Content-Type": "application/json"}}
+  );
 };
