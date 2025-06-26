@@ -7,6 +7,12 @@ import {getPosts, updateVote} from "@/services/api";
 const Dashboard = () => {
   const [postData, setPostData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState("all");
+
+  const filteredPosts =
+    category === "all"
+      ? postData
+      : postData.filter((post) => post.category === category);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -52,74 +58,77 @@ const Dashboard = () => {
 
   return (
     <div>
-      <UserInputSection />
+      <UserInputSection category={category} setCategory={setCategory} />
       <div>
         {loading ? (
-          <div className="text-center py-10 text-lg font-semibold text-blue-600">
+          <div className="text-center py-10 text-lg font-semibold text-black">
             Loading...
           </div>
         ) : (
           <ul className="max-w-3xl flex justify-center flex-col mx-auto gap-5 p-5">
-            {postData.map((post, index) => {
-              const {
-                title,
-                description,
-                username,
-                xUsername,
-                resourceUrl,
-                category,
-              } = post;
-              return (
-                <li
-                  key={post._id}
-                  className="relative bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-2 p-4 sm:p-5"
-                >
-                  {/* Content Section */}
-                  <div className="flex-1 min-w-0 pr-0 sm:pr-20">
-                    <div className="flex flex-wrap items-center gap-2 mb-2"></div>
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words flex gap-2 items-center">
-                      <span className="text-xs bg-black text-white px-3 py-2 rounded-full font-semibold">
-                        # {index + 1}
-                      </span>{" "}
-                      {title}
-                    </h2>
-                    <p className="text-gray-700 mt-1 break-words">
-                      {description}
-                    </p>
-                    <div className="space-x-3 gap-2 mt-3 flex-wrap">
-                      <span className="text-sm text-gray-500">
-                        <span className="font-semibold">By:</span>{" "}
-                        {xUsername ? (
+            {filteredPosts.length === 0 ? (
+              <h2 className="text-center"> Not Found</h2>
+            ) : (
+              filteredPosts.map((post, index) => {
+                const {
+                  title,
+                  description,
+                  username,
+                  xUsername,
+                  resourceUrl,
+                  category,
+                } = post;
+                return (
+                  <li
+                    key={post._id}
+                    className="relative bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-2 p-4 sm:p-5"
+                  >
+                    {/* Content Section */}
+                    <div className="flex-1 min-w-0 pr-0 sm:pr-20">
+                      <div className="flex flex-wrap items-center gap-2 mb-2"></div>
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words flex gap-2 items-center">
+                        <span className="text-xs bg-black text-white px-3 py-2 rounded-full font-semibold">
+                          # {index + 1}
+                        </span>
+                        {title}
+                      </h2>
+                      <p className="text-gray-700 mt-1 break-words">
+                        {description}
+                      </p>
+                      <div className="space-x-3 gap-2 mt-3 flex-wrap">
+                        <span className="text-sm text-gray-500">
+                          <span className="font-semibold">By:</span>{" "}
+                          {xUsername ? (
+                            <a
+                              href={`https://twitter.com/${xUsername}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:underline"
+                            >
+                              {username}
+                            </a>
+                          ) : (
+                            username
+                          )}
+                        </span>
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
+                          {category}
+                        </span>
+                        {resourceUrl && (
                           <a
-                            href={`https://twitter.com/${xUsername}`}
+                            href={resourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-500 hover:underline"
+                            className="text-xs text-blue-600 hover:underline ml-auto"
                           >
-                            {username}
+                            Resource
                           </a>
-                        ) : (
-                          username
                         )}
-                      </span>
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
-                        {category}
-                      </span>
-                      {resourceUrl && (
-                        <a
-                          href={resourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:underline ml-auto"
-                        >
-                          Resource
-                        </a>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                  {/* Vote Section: vertical on desktop, horizontal on mobile */}
-                  <div
-                    className="
+                    {/* Vote Section: vertical on desktop, horizontal on mobile */}
+                    <div
+                      className="
       flex sm:flex-col items-center justify-center
       gap-2 sm:gap-1
       sm:absolute sm:right-5 sm:top-1/2 sm:-translate-y-1/2
@@ -127,28 +136,29 @@ const Dashboard = () => {
       bg-gray-50 sm:bg-transparent rounded-lg px-2 py-2 sm:p-0
       w-full sm:w-auto
     "
-                  >
-                    <button
-                      className="p-2 rounded-full hover:bg-blue-100 transition"
-                      onClick={() => handleVote(post._id, "up")}
-                      aria-label="Upvote"
                     >
-                      <ChevronUp className="w-6 h-6 text-blue-600" />
-                    </button>
-                    <span className="text-lg font-bold text-gray-800 px-2">
-                      {typeof post.votes === "number" ? post.votes : 0}
-                    </span>
-                    <button
-                      className="p-2 rounded-full hover:bg-blue-100 transition"
-                      onClick={() => handleVote(post._id, "down")}
-                      aria-label="Downvote"
-                    >
-                      <ChevronDown className="w-6 h-6 text-blue-600" />
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
+                      <button
+                        className="p-2 rounded-full hover:bg-blue-100 transition"
+                        onClick={() => handleVote(post._id, "up")}
+                        aria-label="Upvote"
+                      >
+                        <ChevronUp className="w-6 h-6 text-blue-600" />
+                      </button>
+                      <span className="text-lg font-bold text-gray-800 px-2">
+                        {typeof post.votes === "number" ? post.votes : 0}
+                      </span>
+                      <button
+                        className="p-2 rounded-full hover:bg-blue-100 transition"
+                        onClick={() => handleVote(post._id, "down")}
+                        aria-label="Downvote"
+                      >
+                        <ChevronDown className="w-6 h-6 text-blue-600" />
+                      </button>
+                    </div>
+                  </li>
+                );
+              })
+            )}
           </ul>
         )}
       </div>
