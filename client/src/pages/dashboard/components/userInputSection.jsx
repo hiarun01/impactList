@@ -10,7 +10,7 @@ import {
 import {Button} from "@/components/ui/button";
 import {NavLink} from "react-router-dom";
 
-const userInputSection = () => {
+const userInputSection = ({category, setCategory}) => {
   return (
     <div className="sticky top-0 z-10 bg-white flex flex-col items-center justify-center w-full h-full shadow">
       <div className="mb-4 w-full max-w-3xl text-center py-5">
@@ -20,18 +20,18 @@ const userInputSection = () => {
       {/* post thoughts */}
       <div className="flex items-center justify-between mb-4 w-full max-w-3xl px-5">
         <div>
-          <Select>
+          <Select value={category} onValueChange={setCategory}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select a Category" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="apple">All</SelectItem>
-                <SelectItem value="banana">Books</SelectItem>
-                <SelectItem value="blueberry">Article</SelectItem>
-                <SelectItem value="grapes">Podcast</SelectItem>
-                <SelectItem value="pineapple">Movies</SelectItem>
-                <SelectItem value="pineapple">Advice</SelectItem>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="books">Books</SelectItem>
+                <SelectItem value="article">Article</SelectItem>
+                <SelectItem value="podcast">Podcast</SelectItem>
+                <SelectItem value="movies">Movies</SelectItem>
+                <SelectItem value="advice">Advice</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

@@ -128,11 +128,12 @@ const Post = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
+                  <SelectItem value="aall">All</SelectItem>
                   <SelectItem value="books">Books</SelectItem>
                   <SelectItem value="article">Article</SelectItem>
                   <SelectItem value="podcast">Podcast</SelectItem>
                   <SelectItem value="movies">Movies</SelectItem>
-                  <SelectItem value="movies">advice</SelectItem>
+                  <SelectItem value="advice">Advice</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
