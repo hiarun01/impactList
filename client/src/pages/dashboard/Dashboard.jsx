@@ -3,16 +3,23 @@ import React, {useEffect, useState} from "react";
 import UserInputSection from "./components/userInputSection";
 import {ChevronDown, ChevronUp} from "lucide-react";
 import {getPosts, updateVote} from "@/services/api";
+import {toast} from "sonner";
 
 const Dashboard = () => {
   const [postData, setPostData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState("all");
+  
+  const [votedPosts, setVotedPosts] = useState([]);
 
   const filteredPosts =
     category === "all"
       ? postData
       : postData.filter((post) => post.category === category);
+
+  const sortedPosts = [...filteredPosts].sort(
+    (a, b) => (b.votes || 0) - (a.votes || 0)
+  );
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -27,8 +34,37 @@ const Dashboard = () => {
   };
 
   const handleVote = async (id, vote) => {
+    // Prevent voting again in this session
+    if (votedPosts.includes(id)) {
+      toast.error("You have already voted on this post.");
+      return;
+    }
+
+    // Optimistically update UI
+    setPostData((prev) =>
+      prev.map((post) =>
+        post._id === id
+          ? {
+              ...post,
+              votes:
+                typeof post.votes === "number"
+                  ? vote === "up"
+                    ? post.votes + 1
+                    : post.votes - 1
+                  : vote === "up"
+                  ? 1
+                  : -1,
+            }
+          : post
+      )
+    );
+
     try {
-      // Optimistically update UI
+      await updateVote(id, vote);
+      setVotedPosts((prev) => [...prev, id]);
+      toast.success("Vote submitted!");
+    } catch (error) {
+      // Revert optimistic update if error
       setPostData((prev) =>
         prev.map((post) =>
           post._id === id
@@ -37,18 +73,20 @@ const Dashboard = () => {
                 votes:
                   typeof post.votes === "number"
                     ? vote === "up"
-                      ? post.votes + 1
-                      : post.votes - 1
-                    : vote === "up"
-                    ? 1
-                    : -1,
+                      ? post.votes - 1
+                      : post.votes + 1
+                    : 0,
               }
             : post
         )
       );
-      await updateVote(id, vote);
-    } catch (error) {
-      console.error("Error voting:", error);
+      if (error.response && error.response.status === 403) {
+        setVotedPosts((prev) => [...prev, id]);
+        toast.error("You have already voted on this post.");
+      } else {
+        toast.error("Error voting. Please try again.");
+        console.error("Error voting:", error);
+      }
     }
   };
 
@@ -66,10 +104,10 @@ const Dashboard = () => {
           </div>
         ) : (
           <ul className="max-w-3xl flex justify-center flex-col mx-auto gap-5 p-5">
-            {filteredPosts.length === 0 ? (
+            {sortedPosts.length === 0 ? (
               <h2 className="text-center"> Not Found</h2>
             ) : (
-              filteredPosts.map((post, index) => {
+              sortedPosts.map((post, index) => {
                 const {
                   title,
                   description,
@@ -78,6 +116,7 @@ const Dashboard = () => {
                   resourceUrl,
                   category,
                 } = post;
+                const alreadyVoted = votedPosts.includes(post._id);
                 return (
                   <li
                     key={post._id}
@@ -85,7 +124,6 @@ const Dashboard = () => {
                   >
                     {/* Content Section */}
                     <div className="flex-1 min-w-0 pr-0 sm:pr-20">
-                      <div className="flex flex-wrap items-center gap-2 mb-2"></div>
                       <h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words flex gap-2 items-center">
                         <span className="text-xs bg-black text-white px-3 py-2 rounded-full font-semibold">
                           # {index + 1}
@@ -126,33 +164,35 @@ const Dashboard = () => {
                         )}
                       </div>
                     </div>
-                    {/* Vote Section: vertical on desktop, horizontal on mobile */}
+                    {/* Vote Section */}
                     <div
                       className="
-      flex sm:flex-col items-center justify-center
-      gap-2 sm:gap-1
-      sm:absolute sm:right-5 sm:top-1/2 sm:-translate-y-1/2
-      mt-4 sm:mt-0
-      bg-gray-50 sm:bg-transparent rounded-lg px-2 py-2 sm:p-0
-      w-full sm:w-auto
-    "
+                        flex sm:flex-col items-center justify-center
+                        gap-2 sm:gap-1
+                        sm:absolute sm:right-5 sm:top-1/2 sm:-translate-y-1/2
+                        mt-4 sm:mt-0
+                        bg-gray-50 sm:bg-transparent rounded-lg px-2 py-2 sm:p-0
+                        w-full sm:w-auto
+                      "
                     >
                       <button
-                        className="p-2 rounded-full hover:bg-blue-100 transition"
+                        className="p-2 rounded-full transition bg-blue-100"
                         onClick={() => handleVote(post._id, "up")}
                         aria-label="Upvote"
+                        disabled={alreadyVoted}
                       >
-                        <ChevronUp className="w-6 h-6 text-blue-600" />
+                        <ChevronUp className="w-6 h-6" />
                       </button>
                       <span className="text-lg font-bold text-gray-800 px-2">
                         {typeof post.votes === "number" ? post.votes : 0}
                       </span>
                       <button
-                        className="p-2 rounded-full hover:bg-blue-100 transition"
+                        className="p-2 rounded-full transition bg-red-100"
                         onClick={() => handleVote(post._id, "down")}
                         aria-label="Downvote"
+                        disabled={alreadyVoted}
                       >
-                        <ChevronDown className="w-6 h-6 text-blue-600" />
+                        <ChevronDown className="w-6 h-6" />
                       </button>
                     </div>
                   </li>

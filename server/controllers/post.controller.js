@@ -55,34 +55,39 @@ export const getPosts = async (req, res) => {
 
 export const userVote = async (req, res) => {
   try {
-    const {id, vote} = req.body; // vote: "up" or "down"
+    const {id, vote} = req.body;
+    // Get IP address (works for most setups)
+    const ip =
+      req.headers["x-forwarded-for"]?.split(",")[0] ||
+      req.connection.remoteAddress;
 
     if (!id || !["up", "down"].includes(vote)) {
       return res.status(400).json({message: "Invalid vote data"});
     }
 
     const post = await Post.findById(id);
-    if (!post) {
-      return res.status(404).json({message: "Post not found"});
+    if (!post) return res.status(404).json({message: "Post not found"});
+
+    // Check if IP has already voted
+    if (post.votedIPs.includes(ip)) {
+      return res
+        .status(403)
+        .json({message: "You have already voted on this post."});
     }
 
-    // Initialize votes if not present
+    // Update votes
     if (typeof post.votes !== "number") post.votes = 0;
+    if (vote === "up") post.votes += 1;
+    else post.votes -= 1;
 
-    if (vote === "up") {
-      post.votes += 1;
-    } else if (vote === "down") {
-      post.votes -= 1;
-    }
+    // Add IP to votedIPs
+    post.votedIPs.push(ip);
 
     await post.save();
 
-    return res.status(200).json({
-      message: "Vote updated",
-      votes: post.votes,
-    });
+    return res.status(200).json({message: "Vote counted", votes: post.votes});
   } catch (error) {
-    console.error("Error while updating vote", error);
+    console.error("Error while voting:", error);
     return res.status(500).json({message: "Internal server error"});
   }
 };

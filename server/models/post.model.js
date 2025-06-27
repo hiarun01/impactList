@@ -29,6 +29,7 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     votes: {type: Number, default: 0},
+    votedIPs: {type: [String], default: []},
   },
   {
     timestamps: true,
