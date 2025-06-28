@@ -9,7 +9,7 @@ const Dashboard = () => {
   const [postData, setPostData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState("all");
-  
+
   const [votedPosts, setVotedPosts] = useState([]);
 
   const filteredPosts =
@@ -40,7 +40,6 @@ const Dashboard = () => {
       return;
     }
 
-    // Optimistically update UI
     setPostData((prev) =>
       prev.map((post) =>
         post._id === id
@@ -64,7 +63,6 @@ const Dashboard = () => {
       setVotedPosts((prev) => [...prev, id]);
       toast.success("Vote submitted!");
     } catch (error) {
-      // Revert optimistic update if error
       setPostData((prev) =>
         prev.map((post) =>
           post._id === id
@@ -111,7 +109,7 @@ const Dashboard = () => {
                 const {
                   title,
                   description,
-                  username,
+                  fullName,
                   xUsername,
                   resourceUrl,
                   category,
@@ -143,10 +141,10 @@ const Dashboard = () => {
                               rel="noopener noreferrer"
                               className="text-blue-500 hover:underline"
                             >
-                              {username}
+                              {fullName}
                             </a>
                           ) : (
-                            username
+                            fullName
                           )}
                         </span>
                         <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">

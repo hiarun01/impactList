@@ -2,18 +2,18 @@ import Post from "../models/post.model.js";
 
 export const post = async (req, res) => {
   try {
-    const {title, description, username, xUsername, resourceUrl, category} =
+    const {title, description, fullName, xUsername, resourceUrl, category} =
       req.body;
 
     // Validate required fields
-    if (!title || !description || !username || !xUsername || !category) {
+    if (!title || !description || !fullName || !xUsername || !category) {
       return res.status(400).json({message: "All fields are required"});
     }
 
     const post = new Post({
       title,
       description,
-      username,
+      fullName,
       xUsername,
       resourceUrl,
       category,
@@ -27,7 +27,7 @@ export const post = async (req, res) => {
         id: post._id,
         title: post.title,
         description: post.description,
-        username: post.username,
+        fullName: post.fullName,
         xUsername: post.xUsername,
         resourceUrl: post.resourceUrl,
         category: post.category,
