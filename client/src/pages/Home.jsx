@@ -1,17 +1,15 @@
-import HeroSection from "@/HeroSection";
-import {MarqueeComponent} from "@/MarqueeComponent";
-import {HeartIcon, UserRoundCogIcon} from "lucide-react";
+import HeroSection from "@/components/HeroSection";
+import {MarqueeComponent} from "@/components/MarqueeComponent";
+import WhyUse from "@/components/WhyUSE";
+
 import React from "react";
 
 const Home = () => {
-  // Example stats (replace with real data if available)
-  const contributors = 128;
-  const livesImpacted = 542;
-
   return (
     <>
       <HeroSection />
       <MarqueeComponent />
+      <WhyUse />
     </>
   );
 };

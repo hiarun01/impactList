@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
-import {Button} from "./components/ui/button";
+
 import {Users} from "lucide-react";
-import {getPosts} from "./services/api"; // adjust path if needed
+import {Button} from "./ui/button";
+import {getPosts} from "@/services/api";
 
 const Header = () => {
   const location = useLocation();

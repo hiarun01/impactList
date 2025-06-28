@@ -1,6 +1,6 @@
 import React from "react";
 import {NavLink} from "react-router-dom";
-import {Button} from "./components/ui/button";
+import {Button} from "./ui/button";
 
 const HeroSection = () => {
   return (
