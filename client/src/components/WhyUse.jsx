@@ -14,9 +14,9 @@ const WhyUse = () => {
     });
   }, []);
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 md:px-8 py-20 space-y-24">
+    <div className="w-full max-w-6xl mx-auto px-4 md:px-8 py-10 space-y-24">
       {/* 1. About Section */}
-      <section className="text-center max-w-3xl mx-auto flex flex-col">
+      {/* <section className="text-center max-w-3xl mx-auto flex flex-col">
         <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
           About ImpactList
         </h2>
@@ -25,7 +25,7 @@ const WhyUse = () => {
           the world come together to share the things that have truly made a
           difference in their lives.
         </p>
-      </section>
+      </section> */}
       {/* 3. Contribution Stats Section */}
       <section className="text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
@@ -33,7 +33,7 @@ const WhyUse = () => {
         </h2>
         <p className="text-neutral-600 text-base md:text-lg leading-relaxed mb-8">
           community is already growing{" "}
-          <span className="font-bold text-2xl text-black">
+          <span className="font-bold text-lg text-black">
             {contributorCount}+
           </span>
           peoples have contributed they share the top things that changed their
