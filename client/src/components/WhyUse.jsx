@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {Button} from "./ui/button";
 import {NavLink} from "react-router-dom";
 
-const InfoSections = () => {
+const WhyUse = () => {
   const [contributorCount, setContributorCount] = useState(0);
   useEffect(() => {
     getPosts().then((res) => {
@@ -49,4 +49,4 @@ const InfoSections = () => {
   );
 };
 
-export default InfoSections;
+export default WhyUse;
