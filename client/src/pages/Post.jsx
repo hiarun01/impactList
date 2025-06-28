@@ -14,13 +14,14 @@ import {NavLink, useNavigate} from "react-router-dom";
 import {addPost} from "@/services/api";
 import {toast} from "sonner";
 import {Loader2} from "lucide-react";
+import {Textarea} from "@/components/ui/textarea";
 
 const Post = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     title: "",
     description: "",
-    username: "",
+    fullName: "",
     xUsername: "",
     resourceUrl: "",
     category: "",
@@ -69,7 +70,7 @@ const Post = () => {
           </h1>
         </div>
 
-        <form className="">
+        <form className="border p-5 rounded-2xl shadow-2xs">
           <div className="flex justify-center flex-col gap-3">
             <Label>Title</Label>
             <Input
@@ -82,7 +83,9 @@ const Post = () => {
           </div>
           <div className="flex justify-center flex-col gap-3 mt-5">
             <Label>Description</Label>
-            <Input
+            <textarea
+              className="w-full rounded-xl bg-white shadow-sm transition-all text-sm border-gray-200 outline-none placeholder:text-gray-400 p-2"
+              rows={5}
               type="text"
               name="description"
               value={form.description}
@@ -90,53 +93,60 @@ const Post = () => {
               placeholder="Enter Description"
             />
           </div>
-          <div className="flex justify-center flex-col gap-3 mt-5">
-            <Label>Username</Label>
-            <Input
-              type="text"
-              name="username"
-              value={form.username}
-              onChange={handleChange}
-              placeholder="username"
-            />
+          <div className="grid lg:grid-cols-2 gap-3">
+            <div className="flex justify-center flex-col gap-3 mt-5">
+              <Label>Full Name</Label>
+              <Input
+                type="text"
+                name="fullName"
+                value={form.fullName}
+                onChange={handleChange}
+                placeholder="Enter Full Name"
+              />
+            </div>
+            <div className="flex justify-center flex-col gap-3 mt-5">
+              <Label>X Username</Label>
+              <Input
+                type="text"
+                name="xUsername"
+                value={form.xUsername}
+                onChange={handleChange}
+                placeholder="Enter x Username"
+              />
+            </div>
           </div>
-          <div className="flex justify-center flex-col gap-3 mt-5">
-            <Label>x Username</Label>
-            <Input
-              type="text"
-              name="xUsername"
-              value={form.xUsername}
-              onChange={handleChange}
-              placeholder="Enter x Username"
-            />
-          </div>
-          <div className="flex justify-center flex-col gap-3 mt-5">
-            <Label>Add Resource Url (Optional)</Label>
-            <Input
-              type="text"
-              name="resourceUrl"
-              value={form.resourceUrl}
-              onChange={handleChange}
-              placeholder="add Resource Url if any"
-            />
-          </div>
-          <div className="flex justify-center flex-col gap-3 mt-5">
-            <Label>Select Category</Label>
-            <Select value={form.category} onValueChange={handleCategoryChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="aall">All</SelectItem>
-                  <SelectItem value="books">Books</SelectItem>
-                  <SelectItem value="article">Article</SelectItem>
-                  <SelectItem value="podcast">Podcast</SelectItem>
-                  <SelectItem value="movies">Movies</SelectItem>
-                  <SelectItem value="advice">Advice</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+          <div className="grid lg:grid-cols-2 gap-3">
+            <div className="flex justify-center flex-col gap-3 mt-5">
+              <Label>Resource Url (Optional)</Label>
+              <Input
+                type="text"
+                name="resourceUrl"
+                value={form.resourceUrl}
+                onChange={handleChange}
+                placeholder="add Resource Url"
+              />
+            </div>
+            <div className="flex justify-center flex-col gap-3 mt-5">
+              <Label>Select Category</Label>
+              <Select
+                value={form.category}
+                onValueChange={handleCategoryChange}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="aall">All</SelectItem>
+                    <SelectItem value="books">Books</SelectItem>
+                    <SelectItem value="article">Article</SelectItem>
+                    <SelectItem value="podcast">Podcast</SelectItem>
+                    <SelectItem value="movies">Movies</SelectItem>
+                    <SelectItem value="advice">Advice</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="mt-5 grid grid-cols-2 justify-center gap-3 ">
