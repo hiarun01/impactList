@@ -1,8 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import {MarqueeComponent} from "@/components/MarqueeComponent";
-import WhyUse from "@/components/WhyUSE";
-
-import React from "react";
+import WhyUse from "@/components/WhyUse";
 
 const Home = () => {
   return (

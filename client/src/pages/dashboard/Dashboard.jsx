@@ -1,4 +1,3 @@
-// ...existing imports...
 import React, {useEffect, useState} from "react";
 import UserInputSection from "./components/userInputSection";
 import {ChevronDown, ChevronUp} from "lucide-react";
@@ -9,7 +8,6 @@ const Dashboard = () => {
   const [postData, setPostData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState("all");
-
   const [votedPosts, setVotedPosts] = useState([]);
 
   const filteredPosts =
