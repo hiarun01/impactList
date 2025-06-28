@@ -46,7 +46,7 @@ const Header = () => {
         <div className="flex items-center space-x-2 text-black/80">
           <Users className="w-4 h-4" />
           <span className="text-sm font-medium">
-            {contributorCount} contributor{contributorCount !== 1 ? "s" : ""}
+            {contributorCount} contributor
           </span>
         </div>
       )}
