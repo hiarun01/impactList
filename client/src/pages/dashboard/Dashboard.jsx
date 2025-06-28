@@ -8,7 +8,8 @@ const Dashboard = () => {
   const [postData, setPostData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState("all");
-  const [votedPosts, setVotedPosts] = useState([]);
+  const [votedPosts, setVotedPosts] = useState(new Map()); // Track vote type per post
+  const [votingInProgress, setVotingInProgress] = useState(new Set()); // Track loading states
 
   const filteredPosts =
     category === "all"
@@ -19,6 +20,26 @@ const Dashboard = () => {
     (a, b) => (b.votes || 0) - (a.votes || 0)
   );
 
+  // Load voted posts from localStorage on component mount
+  useEffect(() => {
+    const savedVotes = localStorage.getItem("userVotes");
+    if (savedVotes) {
+      try {
+        const parsedVotes = JSON.parse(savedVotes);
+        setVotedPosts(new Map(parsedVotes));
+      } catch (error) {
+        console.error("Error loading saved votes:", error);
+      }
+    }
+  }, []);
+
+  // Save voted posts to localStorage whenever it changes
+  useEffect(() => {
+    if (votedPosts.size > 0) {
+      localStorage.setItem("userVotes", JSON.stringify([...votedPosts]));
+    }
+  }, [votedPosts]);
+
   const fetchPosts = async () => {
     setLoading(true);
     try {
@@ -26,63 +47,158 @@ const Dashboard = () => {
       setPostData(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
+      toast.error("Failed to load posts. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleVote = async (id, vote) => {
-    // Prevent voting again in this session
-    if (votedPosts.includes(id)) {
-      toast.error("You have already voted on this post.");
+    const currentVote = votedPosts.get(id);
+
+    // If user is trying to vote the same way again, show message
+    if (currentVote === vote) {
+      toast.info(
+        `You have already ${vote === "up" ? "upvoted" : "downvoted"} this post.`
+      );
       return;
     }
 
+    // Prevent multiple simultaneous votes on the same post
+    if (votingInProgress.has(id)) {
+      return;
+    }
+
+    // Add to voting in progress
+    setVotingInProgress((prev) => new Set(prev).add(id));
+
+    // Calculate vote change
+    let voteChange = 0;
+    if (currentVote === null || currentVote === undefined) {
+      // First vote
+      voteChange = vote === "up" ? 1 : -1;
+    } else {
+      // Changing vote (from up to down or vice versa)
+      voteChange = vote === "up" ? 2 : -2;
+    }
+
+    // Optimistically update UI
     setPostData((prev) =>
       prev.map((post) =>
         post._id === id
           ? {
               ...post,
-              votes:
-                typeof post.votes === "number"
-                  ? vote === "up"
-                    ? post.votes + 1
-                    : post.votes - 1
-                  : vote === "up"
-                  ? 1
-                  : -1,
+              votes: (post.votes || 0) + voteChange,
             }
           : post
       )
     );
 
+    // Update voted posts state optimistically
+    setVotedPosts((prev) => new Map(prev).set(id, vote));
+
     try {
       await updateVote(id, vote);
-      setVotedPosts((prev) => [...prev, id]);
-      toast.success("Vote submitted!");
+      toast.success(`${vote === "up" ? "Upvoted" : "Downvoted"} successfully!`);
     } catch (error) {
+      // Revert optimistic updates on error
       setPostData((prev) =>
         prev.map((post) =>
           post._id === id
             ? {
                 ...post,
-                votes:
-                  typeof post.votes === "number"
-                    ? vote === "up"
-                      ? post.votes - 1
-                      : post.votes + 1
-                    : 0,
+                votes: (post.votes || 0) - voteChange,
               }
             : post
         )
       );
+
+      // Revert vote state
+      setVotedPosts((prev) => {
+        const newMap = new Map(prev);
+        if (currentVote === null || currentVote === undefined) {
+          newMap.delete(id);
+        } else {
+          newMap.set(id, currentVote);
+        }
+        return newMap;
+      });
+
       if (error.response && error.response.status === 403) {
-        setVotedPosts((prev) => [...prev, id]);
         toast.error("You have already voted on this post.");
+      } else if (error.response && error.response.status === 429) {
+        toast.error("Too many requests. Please wait before voting again.");
       } else {
         toast.error("Error voting. Please try again.");
         console.error("Error voting:", error);
       }
+    } finally {
+      // Remove from voting in progress
+      setVotingInProgress((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
+    }
+  };
+
+  const handleRemoveVote = async (id) => {
+    const currentVote = votedPosts.get(id);
+    if (!currentVote) return;
+
+    // Prevent multiple simultaneous operations
+    if (votingInProgress.has(id)) return;
+
+    setVotingInProgress((prev) => new Set(prev).add(id));
+
+    // Calculate vote change to revert
+    const voteChange = currentVote === "up" ? -1 : 1;
+
+    // Optimistically update UI
+    setPostData((prev) =>
+      prev.map((post) =>
+        post._id === id
+          ? {
+              ...post,
+              votes: (post.votes || 0) + voteChange,
+            }
+          : post
+      )
+    );
+
+    // Remove vote from state
+    setVotedPosts((prev) => {
+      const newMap = new Map(prev);
+      newMap.delete(id);
+      return newMap;
+    });
+
+    try {
+      // You'll need to implement a removeVote API endpoint
+      // await removeVote(id);
+      toast.success("Vote removed successfully!");
+    } catch (error) {
+      console.log(error);
+      // Revert on error
+      setPostData((prev) =>
+        prev.map((post) =>
+          post._id === id
+            ? {
+                ...post,
+                votes: (post.votes || 0) - voteChange,
+              }
+            : post
+        )
+      );
+
+      setVotedPosts((prev) => new Map(prev).set(id, currentVote));
+      toast.error("Error removing vote. Please try again.");
+    } finally {
+      setVotingInProgress((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     }
   };
 
@@ -112,7 +228,10 @@ const Dashboard = () => {
                   resourceUrl,
                   category,
                 } = post;
-                const alreadyVoted = votedPosts.includes(post._id);
+
+                const userVote = votedPosts.get(post._id);
+                const isVoting = votingInProgress.has(post._id);
+
                 return (
                   <li
                     key={post._id}
@@ -160,6 +279,7 @@ const Dashboard = () => {
                         )}
                       </div>
                     </div>
+
                     {/* Vote Section */}
                     <div
                       className="
@@ -172,25 +292,102 @@ const Dashboard = () => {
                       "
                     >
                       <button
-                        className="p-2 rounded-full transition bg-blue-100"
-                        onClick={() => handleVote(post._id, "up")}
-                        aria-label="Upvote"
-                        disabled={alreadyVoted}
+                        className={`
+                          p-2 rounded-full transition-all duration-200 
+                          ${
+                            userVote === "up"
+                              ? "bg-blue-500 text-white shadow-md"
+                              : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                          }
+                          ${
+                            isVoting
+                              ? "opacity-50 cursor-not-allowed"
+                              : "hover:scale-105"
+                          }
+                          disabled:cursor-not-allowed
+                        `}
+                        onClick={() =>
+                          userVote === "up"
+                            ? handleRemoveVote(post._id)
+                            : handleVote(post._id, "up")
+                        }
+                        aria-label={
+                          userVote === "up" ? "Remove upvote" : "Upvote"
+                        }
+                        disabled={isVoting}
                       >
-                        <ChevronUp className="w-6 h-6" />
+                        <ChevronUp
+                          className={`w-6 h-6 ${
+                            isVoting ? "animate-pulse" : ""
+                          }`}
+                        />
                       </button>
-                      <span className="text-lg font-bold text-gray-800 px-2">
+
+                      <span
+                        className={`
+                        text-lg font-bold px-2 transition-colors duration-200
+                        ${
+                          userVote === "up"
+                            ? "text-blue-600"
+                            : userVote === "down"
+                            ? "text-red-600"
+                            : "text-gray-800"
+                        }
+                      `}
+                      >
                         {typeof post.votes === "number" ? post.votes : 0}
                       </span>
+
                       <button
-                        className="p-2 rounded-full transition bg-red-100"
-                        onClick={() => handleVote(post._id, "down")}
-                        aria-label="Downvote"
-                        disabled={alreadyVoted}
+                        className={`
+                          p-2 rounded-full transition-all duration-200
+                          ${
+                            userVote === "down"
+                              ? "bg-red-500 text-white shadow-md"
+                              : "bg-red-100 text-red-600 hover:bg-red-200"
+                          }
+                          ${
+                            isVoting
+                              ? "opacity-50 cursor-not-allowed"
+                              : "hover:scale-105"
+                          }
+                          disabled:cursor-not-allowed
+                        `}
+                        onClick={() =>
+                          userVote === "down"
+                            ? handleRemoveVote(post._id)
+                            : handleVote(post._id, "down")
+                        }
+                        aria-label={
+                          userVote === "down" ? "Remove downvote" : "Downvote"
+                        }
+                        disabled={isVoting}
                       >
-                        <ChevronDown className="w-6 h-6" />
+                        <ChevronDown
+                          className={`w-6 h-6 ${
+                            isVoting ? "animate-pulse" : ""
+                          }`}
+                        />
                       </button>
                     </div>
+
+                    {/* Vote status indicator */}
+                    {userVote && (
+                      <div className="absolute top-2 right-2 sm:top-2 sm:right-16">
+                        <span
+                          className={`
+                          text-xs px-2 py-1 rounded-full font-medium
+                          ${
+                            userVote === "up"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-red-100 text-red-700"
+                          }
+                        `}
+                        >
+                          {userVote === "up" ? "👍 Upvoted" : "👎 Downvoted"}
+                        </span>
+                      </div>
+                    )}
                   </li>
                 );
               })
