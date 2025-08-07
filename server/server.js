@@ -22,7 +22,7 @@ if (MODE === "dev") {
 } else if (MODE === "prod") {
   app.use(
     cors({
-      origin: "https://impact-list.vercel.app",
+      origin: "https://impactlist.hiarun.me/",
     })
   );
 }
